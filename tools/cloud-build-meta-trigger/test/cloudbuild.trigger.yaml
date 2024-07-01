@@ -1,0 +1,16 @@
+# In this directory, run the following command to deploy this Cloud Build trigger.
+# $ gcloud builds triggers import --source=test.cloudbuild.trigger.yaml
+
+name: cloud-build-meta-trigger
+description: "Trigger to deploy Cloud Build triggers on change"
+timeout: "600"
+github:
+  owner: dbrtly
+  name: learn-cloud-build
+  push:
+    branch: main
+filename: .cloudbuild/meta-trigger/test/cloudbuild.yaml
+includedFiles:
+  - ".cloudbuild/meta-trigger/test/cloudbuild.yaml"
+  - "projects/*\\/test/cloudbuild.trigger.yaml"
+  - "tools\\/*\\/cloudbuild.trigger.yaml"

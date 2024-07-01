@@ -1,0 +1,52 @@
+# For manual validation, open a terminal in this directory and run the following command:
+# $ gcloud builds submit
+
+substitutions:
+  _CONFLUENCE_BASE_URL: https://dbrtly.atlassian.net
+  _CONFLUENCE_PARENT_ID: "983041"
+
+options:
+  automapSubstitutions: true
+  dynamicSubstitutions: true
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/atlassian_api_token/versions/1
+    env: 'ATLASSIAN_API_TOKEN'
+  - versionName: projects/${PROJECT_ID}/secrets/atlassian_username/versions/1
+    env: 'ATLASSIAN_USERNAME'
+
+substitutions:
+
+steps:
+- name: 'bash'
+  script: |
+    #!/usr/bin/env bash
+
+    # Source directory pattern
+    source_pattern="tools/*/README.md"
+
+    # Destination directory
+    dest_dir="docs/tools"
+
+    # Loop through matching files
+    for filepath in "${source_pattern[@]}"
+    do
+      # Extract subdirectory name from source path
+      subdirectory=${filepath##*/}  # Remove everything before the last "/"
+      subdirectory=${subdirectory%/*}  # Remove "/README.md"
+
+      # Construct destination filename
+      dest_file="$dest_dir/${subdirectory}.md"
+
+      # Copy the file with informative message
+      cp "${filepath}" "${dest_file}" && echo "Copied '${filepath}' to '${dest_file}'"
+    done
+- name: docs-to-confluence
+  script: |
+    docker run  us-central1-docker.pkg.dev/${PROJECT_ID}/tools/docs-to-confluence:latest \
+      --env ATLASSIAN_API_TOKEN=$${ATLASSIAN_API_TOKEN} \
+      --env ATLASSIAN_USERNAME=$${ATLASSIAN_USERNAME} \
+      --env CONFLUENCE_BASE_URL=${_CONFLUENCE_BASE_URL} \
+      --env CONFLUENCE_PARENT_ID=${_CONFLUENCE_PARENT_ID}
+  secretEnv: ['ATLASSIAN_API_TOKEN', 'ATLASSIAN_USERNAME']

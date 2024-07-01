@@ -1,0 +1,17 @@
+# In this directory, run the following command to deploy this Cloud Build trigger.
+# $ gcloud builds triggers import --source=cloudbuild.trigger.yaml
+
+name: python-example-flask-trigger
+description: "Trigger to deploy python-example-flask app on change to gcp prod project"
+github:
+  owner: dbrtly
+  name: learn-cloud-build
+  push:
+    branch: main
+filename: .cloudbuild/python-example-flask/cloudbuild.yaml
+excludedFiles:
+  - "projects/python-example-flask/*.md"
+includedFiles:
+  - "projects/python-example-flask/.cloudbuild.trigger.yaml"
+  - "projects/python-example-flask/.cloudbuild.yaml"
+  - "projects/python-example-flask/*"

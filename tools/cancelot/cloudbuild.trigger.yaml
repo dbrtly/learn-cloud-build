@@ -1,0 +1,14 @@
+# In this directory, run the following command to deploy this Cloud Build trigger.
+# $ gcloud builds triggers import --source=cloudbuild.trigger.yaml
+
+name: tool-cancelot-trigger
+description: "Trigger to build and paxkage the Cancelot tool on change"
+timeout: "600"
+github:
+  owner: dbrtly
+  name: learn-cloud-build
+  push:
+    branch: main
+filename: tools/cancelot/cloudbuild.yaml
+includedFiles:
+  - "tools/cancelot/*"

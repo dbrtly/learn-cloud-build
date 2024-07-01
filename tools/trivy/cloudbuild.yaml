@@ -1,0 +1,12 @@
+steps:
+    gcloud artifacts repositories create ${_REPO} \
+      --repository-format docker \
+      --location ${_LOCATION} \
+      --description "Docker repository"
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag=gcr.io/$PROJECT_ID/tools/trivy', '.']
+- name: "gcr.io/${PROJECT_ID}/tools/trivy"
+  args: ["--help"]
+
+images: ['gcr.io/$PROJECT_ID/tools/trivy']
+tags: ['cloud-builders-community']

@@ -1,0 +1,27 @@
+# For manual validation, open a terminal in this directory and run the following command:
+# $ gcloud builds submit
+
+substitutions:
+  _IMAGE_URI: ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${_TAG}
+  _IMAGE: quickstart-image
+  _LOCATION: us-west2
+  _REPO: quickstart-docker-repo
+  _TAG: tag1
+
+options:
+  automapSubstitutions: true
+  dynamicSubstitutions: true
+
+steps:
+- name: "gcr.io/cloud-builders/gcloud-slim"
+  script: |
+    gcloud artifacts repositories create ${_REPO} \
+      --repository-format docker \
+      --location ${_LOCATION} \
+      --description "Docker repository"
+- name: 'gcr.io/cloud-builders/docker'
+  script: |
+    docker build -t "$_IMAGE_URI" .
+
+images:
+- "$_IMAGE_URI"

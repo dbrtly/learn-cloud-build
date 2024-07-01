@@ -1,0 +1,50 @@
+substitutions:
+  _GOOGLE_REGION: us-central1
+  _IMAGE_URI: "${_GOOGLE_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_IMAGE}:${SHORT_SHA}"
+  _IMAGE: my-image
+  _PLATFORM: managed
+  
+
+options:
+  automapSubstitutions: true
+  dynamicSubstitutions: true
+
+steps:
+  - id: Install dependencies
+    name: python
+    entrypoint: pip
+    args: ["pip", "install", "-r", "requirements.txt", "--user"]
+
+  - id: Run unit tests
+    name: python
+    entrypoint: python
+    args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"] 
+
+  - id: Docker Build
+    name: 'gcr.io/cloud-builders/docker'
+    script: |
+      docker build --tag "${_IMAGE_URI}" .
+
+  - id: Docker push to Google Artifact Registry
+    name: 'gcr.io/cloud-builders/docker'
+    script: docker push "${_IMAGE_URI}"
+  
+  - id: Deploy to Cloud Run
+    name: google/cloud-sdk
+    script: |
+      gcloud run deploy helloworld-${SHORT_SHA} \
+        --image "${_IMAGE_URI}" \
+        --region "${_GOOGLE_REGION}" \
+        --platform "${_PLATFORM}" \
+        --allow-unauthenticated
+  
+# Save test logs to Google Cloud Storage
+artifacts:
+  objects:
+    location: "gs://${_BUCKET_NAME}/"
+    paths:
+      - "${SHORT_SHA}_test_log.xml"
+
+# Store images in Google Artifact Registry 
+images:
+  - "${_IMAGE_URI}"

@@ -1,0 +1,5 @@
+FROM aquasec/trivy:sha256-2f29927e6ac1994b15eb920123ed5967d5df7d7a939219648598a9d085945394.sig
+
+USER root
+
+ENTRYPOINT ["trivy"]

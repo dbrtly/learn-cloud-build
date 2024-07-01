@@ -1,0 +1,11 @@
+# For manual validation, open a terminal in this directory and run the following command:
+# $ gcloud builds submit
+
+steps:
+  - name: gcr.io/$PROJECT_ID/meta-triggers
+    id: Redeploys all Cloud Build triggers on change of any.
+    waitFor:
+      - "-"
+    args: # explicit validity of nesting level is required
+      - "projects\\/*\\/*test/cloudbuild.trigger.yaml"
+      - "tools\\/*\\/*test/cloudbuild.trigger.yaml"

@@ -1,0 +1,29 @@
+# Deploy this Cloud Build trigger via the meta-trigger
+
+name: my-project-test-trigger
+description: "Trigger for test of my-project via Cloud Build in GCP project my-gcp-project-test"
+timeout: "600"
+github:
+  owner: dbrtly
+  name: learn-cloud-build
+  push:
+    branch: main
+filename: projects/my-project/test.cloudbuild.yaml
+includedFiles:
+  - "projects/my-project/test.cloudbuild.trigger.yaml"
+  - "projects/my-project/src/*"
+
+---
+
+name: my-project-test-tidy-trigger
+description: "Trigger for tidy of my-project via Cloud Build in GCP project my-gcp-project-test"
+timeout: "600"
+github:
+  owner: dbrtly
+  name: learn-cloud-build
+  push:
+    branch: main
+filename: projects/my-project/test.cloudbuild.yaml
+includedFiles:
+  - "projects/my-project/test.tidy.cloudbuild.trigger.yaml"
+  - "projects/my-project/src/*"

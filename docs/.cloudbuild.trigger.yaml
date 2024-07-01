@@ -1,0 +1,17 @@
+# In this directory, run the following command to deploy this Cloud Build trigger.
+# $ gcloud builds triggers import --source=cloudbuild.trigger.yaml
+
+name: docs-to-confluence
+resource-name: projects/${PROJECT}/locations/us-central1/triggers/docs-to-confluence
+description: "Cloud Build trigger to publish markdown docs to Confluence"
+github:
+  owner: dbrtly
+  name: docs-to-confluence
+  push:
+    branch: main
+filename: docs/.cloudbuild.yaml
+includeBuildLogs: INCLUDE_BUILD_LOGS_WITH_STATUS
+# yaml files are ignored by default and not published to Confluence.
+includedFiles:
+  - "docs\\/*"
+  - "tools\\/*\\/README.md"

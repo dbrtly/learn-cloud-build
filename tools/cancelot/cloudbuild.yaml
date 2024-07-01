@@ -1,0 +1,19 @@
+# In this directory, run the following command to build this builder.
+# $ gcloud builds submit
+
+options:
+  automapSubstitutions: true
+  dynamicSubstitutions: true
+
+substitutions:
+  _ARTIFACT_IMAGE: cancelot
+  _ARTIFACT_REPOSITORY: tools
+  _ARTIFACT_URI: '${_GOOGLE_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REPOSITORY}/${_ARTIFACT_IMAGE}'
+  _GOOGLE_REGION: us-central1
+  
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${_ARTIFACT_URI}', '.']
+
+images: '${_ARTIFACT_URI}'
+tags: ['cloud-builders-community']
